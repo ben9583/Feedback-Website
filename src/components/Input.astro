@@ -7,10 +7,12 @@ export interface Props {
   id?: string,
   name?: string,
   value?: string,
-  required?: boolean
+  required?: boolean,
+  minlength?: number,
+  maxlength?: number,
 }
 
-const { id, type, placeholder, name, value, required } = Astro.props;
+const { id, type, placeholder, name, value, required, minlength, maxlength } = Astro.props;
 ---
 
-<input required={required} value={value} name={name} id={id} type={type} placeholder={placeholder} class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+<input minlength={minlength} maxlength={maxlength} required={required} value={value} name={name} id={id} type={type} placeholder={placeholder} class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
