@@ -14,7 +14,7 @@ const { logoHref, logoSrc, logoAlt, logoTitle, height } = Astro.props;
 <nav
   class="navbar bg-white shadow-lg fixed top-0 left-0 right-0 h-16 px-4 flex justify-between items-center z-50"
 >
-  <a href={logoHref} class="flex items-center">
+  <a href={logoHref} class="flex items-center text-black">
     <!-- @ts-ignore -->
     <Image src={logoSrc} alt={logoAlt} height={height} />
     {logoTitle && <span class="ml-4 text-xl">{logoTitle}</span>}
