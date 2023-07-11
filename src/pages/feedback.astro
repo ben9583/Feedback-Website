@@ -121,15 +121,15 @@ if(data instanceof Response) {
       <h1 class="text-3xl font-bold mb-8">Submit Feedback</h1>
       {
         data ? (
-          <p class="mb-4">
+          <p class="mb-4 text-lg">
             <b>Hello, {data.from_user}.</b>
           </p>
-          <p class="mb-4">
+          <p class="mb-4 text-lg">
             You've received a code from <b>{data.for_user}</b> asking for feedback
             on a recent encounter. Please use the following textbox to submit your
             thoughts.
           </p>
-          <p class="mb-4">
+          <p class="mb-4 text-lg">
             Thank you!
           </p>
           <form method="POST">
@@ -139,9 +139,9 @@ if(data instanceof Response) {
             <Input type="submit" value="Submit" />
           </form>
         ) : (
-          <p class="mb-4">
+          <p class="mb-4 text-lg">
             Welcome, please submit the code you received from Ben. If you didn't
-            receive a code, but were instruct to come here by him, please ask for
+            receive a code, but were instructed to come here by him, please ask for
             it. Otherwise, this submitting feedback is invite only for now.
           </p>
           <form method="POST">
