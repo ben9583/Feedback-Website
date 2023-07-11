@@ -12,4 +12,5 @@ export default defineConfig({
   experimental: {
     assets: true,
   },
+  output: "server"
 });

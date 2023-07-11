@@ -1,0 +1,42 @@
+---
+import Input from "../components/Input.astro";
+import Layout from "../layouts/Layout.astro";
+
+let message = ""
+
+if(Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    const code = data.get("code");
+    // Do something with the data
+    if(code === "astro") {
+      console.log("Yes!")
+    } else {
+      console.log("No.")
+      message = "Invalid code. Please try again."
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
+---
+
+<Layout title="Submit Feedback to ben9583">
+  <div class="max-w-xl mx-auto">
+    <main class="main-content ml-4 mr-4 py-8 max-w-xl">
+      <h1 class="text-3xl font-bold mb-8">Submit Feedback</h1>
+      <p class="mb-4">
+        Welcome, please submit the code you received from Ben. If you didn't
+        receive a code, but were instruct to come here by him, please ask for
+        it. Otherwise, this submitting feedback is invite only for now.
+      </p>
+      <form method="POST">
+        <label for="code" class="mr-2">Code:</label><Input id="code" name="code" placeholder="Enter code here..." type="text" required />
+        <Input type="submit" value="Submit" />
+      </form>
+      <p class="mt-4 text-red-500">{message}</p>
+    </main>
+  </div>
+</Layout>
