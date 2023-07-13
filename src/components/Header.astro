@@ -1,14 +1,14 @@
 ---
-import { Image } from "astro:assets";
+import { Image } from 'astro:assets'
 export interface Props {
-  logoHref: string;
-  logoSrc: string;
-  logoAlt: string;
-  logoTitle?: string;
-  height: number;
+  logoHref: string
+  logoSrc: string
+  logoAlt: string
+  logoTitle?: string
+  height: number
 }
 
-const { logoHref, logoSrc, logoAlt, logoTitle, height } = Astro.props;
+const { logoHref, logoSrc, logoAlt, logoTitle, height } = Astro.props
 ---
 
 <nav

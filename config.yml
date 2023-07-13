@@ -1,0 +1,4 @@
+﻿website: title: Feedback Website description: Use this website to provide
+feedback. postgres: database: feedback-db user: feedback-user password:
+feedback-password host: localhost port: 5432 admin: name: admin password:
+CHANGE_ME_OR_ELSE
