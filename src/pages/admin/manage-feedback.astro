@@ -1,21 +1,22 @@
 ---
-import NotFound from '../../components/NotFound.astro';
+import NotFound from '../../components/NotFound.astro'
 import Layout from '../../layouts/Layout.astro'
-import adminIsAuthenticated from '../../lib/auth';
+import adminIsAuthenticated from '../../lib/auth'
 
-const authenticated = adminIsAuthenticated(Astro);
+const authenticated = adminIsAuthenticated(Astro)
 ---
 
-{ authenticated ? (
-  <Layout
-  title="Manage Feedback"
-  description="View feedback from people you've sent codes to, see whether they've responded, and invalidate codes after they're sent out."
->
-  <div class="max-w-xl mx-auto">
-    <main class="main-content ml-4 mr-4 py-8 max-w-xl">
-
-    </main>
-  </div>
-  </Layout>
-  ) : <NotFound />
+{
+  authenticated ? (
+    <Layout
+      title="Manage Feedback"
+      description="View feedback from people you've sent codes to, see whether they've responded, and invalidate codes after they're sent out."
+    >
+      <div class="max-w-xl mx-auto">
+        <main class="main-content ml-4 mr-4 py-8 max-w-xl"></main>
+      </div>
+    </Layout>
+  ) : (
+    <NotFound />
+  )
 }

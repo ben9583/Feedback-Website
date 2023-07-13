@@ -2,7 +2,10 @@
 import Layout from '../../layouts/Layout.astro'
 import Input from '../../components/Input.astro'
 import ButtonLikeLink from '../../components/ButtonLikeLink.astro'
-import adminIsAuthenticated, { adminAuthGuard, encodeLogin } from '../../lib/auth'
+import adminIsAuthenticated, {
+  adminAuthGuard,
+  encodeLogin,
+} from '../../lib/auth'
 
 let authenticated = false
 let message = ''
@@ -14,19 +17,20 @@ const handleAdmin = (username: string, passkey: string) => {
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
-  const username = data.get('username')?.toString() ?? ""
-  const passkey = data.get('passkey')?.toString() ?? ""
-  if (adminAuthGuard(username, passkey))
-    handleAdmin(username, passkey)
-  else
-    message = 'Invalid username or passkey. Please try again.'
+  const username = data.get('username')?.toString() ?? ''
+  const passkey = data.get('passkey')?.toString() ?? ''
+  if (adminAuthGuard(username, passkey)) handleAdmin(username, passkey)
+  else message = 'Invalid username or passkey. Please try again.'
 } else {
   authenticated = adminIsAuthenticated(Astro)
 }
 
-if(!authenticated) {
+if (!authenticated) {
   Astro.response.status = 401
-  Astro.response.headers.set('WWW-Authenticate', 'Basic realm="AdminAccess" charset="UTF-8"')
+  Astro.response.headers.set(
+    'WWW-Authenticate',
+    'Basic realm="AdminAccess" charset="UTF-8"'
+  )
 }
 ---
 
@@ -44,8 +48,12 @@ if(!authenticated) {
               Here, you can view all submitted feedback, generate new codes, and
               manage existing codes.
             </p>
-            <ButtonLikeLink href="/admin/manage-feedback">Manage feedback</ButtonLikeLink>
-            <ButtonLikeLink href="/admin/new-code">Create new code</ButtonLikeLink>
+            <ButtonLikeLink href="/admin/manage-feedback">
+              Manage feedback
+            </ButtonLikeLink>
+            <ButtonLikeLink href="/admin/new-code">
+              Create new code
+            </ButtonLikeLink>
           </>
         ) : (
           <>
