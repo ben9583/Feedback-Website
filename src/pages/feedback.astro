@@ -1,18 +1,7 @@
 ---
 import Input from '../components/Input.astro'
 import Layout from '../layouts/Layout.astro'
-import Client from '../lib/db'
-
-interface DatabaseEntry {
-  id: number
-  for_user: string
-  from_user: string
-  code: string
-  created_on: string
-  submitted: boolean
-  response: string
-  submitted_on: string
-}
+import Client, { type DatabaseEntry } from '../lib/db'
 
 let message = ''
 let data: DatabaseEntry | undefined
@@ -41,7 +30,7 @@ const handleRequest = async (code?: string, feedbackText?: string) => {
     }
 
     await client.query(
-      'UPDATE feedback SET submitted = true, response = $1, submitted_on = NOW() WHERE code = $2 RETURNING *',
+      'UPDATE feedback SET submitted = true, response = $1, submitted_on = current_timestamp WHERE code = $2 RETURNING *',
       [feedbackText, code]
     )
     await client.end()
