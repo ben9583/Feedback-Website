@@ -1,6 +1,7 @@
 ---
 import Logo from '../assets/logo.jpg'
 import Header from '../components/Header.astro'
+import WarningBanner from '../components/WarningBanner.astro'
 
 import '../globals.css'
 export interface Props {
@@ -9,6 +10,7 @@ export interface Props {
 }
 
 const { title, description } = Astro.props
+console.log(Astro.url.hostname)
 ---
 
 <!DOCTYPE html>
@@ -35,6 +37,15 @@ const { title, description } = Astro.props
       <a href="/about">About</a>
       <a href="/feedback">Submit Feedback</a>
     </Header>
-    <div class="mt-16"><slot /></div>
+    { Astro.url.protocol === "http:" && (Astro.url.hostname !== "localhost" && Astro.url.hostname !== "127.0.0.1") ? <>
+        <WarningBanner 
+          title="This Site is Insecure" 
+          description="This site appears to not be using HTTPS, meaning all traffic between you and this site can be viewed by others without you knowing. Do not include any sensitive information in feedback or other forms." 
+        />
+        <div><slot /></div>
+      </> : <>
+        <div class="mt-16"><slot /></div>
+      </>
+    }
   </body>
 </html>

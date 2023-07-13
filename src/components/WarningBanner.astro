@@ -1,0 +1,23 @@
+---
+export interface Props {
+  title: string,
+  description: string,
+}
+
+const { title, description } = Astro.props
+---
+
+<div class="flex items-center p-4 bg-red-50 border-red-500 border-2 border-solid z-50 rounded-xl w-[80%] mt-20 mx-auto">
+  <div class="flex items-center justify-center rounded-full text-red-500">
+    <div class="w-7 h-7 mr-5">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" >
+        <path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z"/>
+        <path fill="currentColor" d="M11 7h2v7h-2zm0 8h2v2h-2z"/>
+      </svg>
+    </div>
+  </div>
+  <div>
+    <h2 class="m-0 font-bold text-2xl text-red-500 mb-1">{title}</h2>
+    <p class="m-0 font-light text-red-500">{description}</p>
+  </div>
+</div>
