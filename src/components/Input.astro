@@ -1,51 +1,10 @@
 ---
-export type TypeAttribute =
-  | 'button'
-  | 'checkbox'
-  | 'color'
-  | 'date'
-  | 'datetime-local'
-  | 'email'
-  | 'file'
-  | 'hidden'
-  | 'image'
-  | 'month'
-  | 'number'
-  | 'password'
-  | 'radio'
-  | 'range'
-  | 'reset'
-  | 'search'
-  | 'submit'
-  | 'tel'
-  | 'text'
-  | 'time'
-  | 'url'
-  | 'week'
+import type { HTMLAttributes } from 'astro/types'
 
-export interface Props {
-  type?: TypeAttribute
-  placeholder?: string
-  id?: string
-  name?: string
-  value?: string
-  required?: boolean
-  minlength?: number
-  maxlength?: number
-}
-
-const { id, type, placeholder, name, value, required, minlength, maxlength } =
-  Astro.props
+export type Props = HTMLAttributes<'input'>
 ---
 
 <input
-  minlength={minlength}
-  maxlength={maxlength}
-  required={required}
-  value={value}
-  name={name}
-  id={id}
-  type={type}
-  placeholder={placeholder}
+  {...Astro.props}
   class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 />
