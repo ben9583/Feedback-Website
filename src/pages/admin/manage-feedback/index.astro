@@ -1,0 +1,115 @@
+---
+import AuthProvider from '../../../components/AuthProvider.astro'
+import NotFound from '../../../components/NotFound.astro'
+import Layout from '../../../layouts/Layout.astro'
+import adminIsAuthenticated from '../../../lib/auth'
+import Client, { type DatabaseEntry } from '../../../lib/db'
+
+const authenticated = adminIsAuthenticated(Astro)
+if(!authenticated) return
+
+const client = new Client();
+await client.connect();
+
+if(Astro.request.method === "POST") {
+  const formData = await Astro.request.formData()
+  const id = formData.get("id")?.toString()
+  const action = formData.get("action")?.toString()
+
+  if(!action || !id) {
+    await client.end()
+    return
+  }
+
+  switch(action) {
+    case "DELETE":
+      await client.query(
+        `
+        DELETE FROM feedback
+        WHERE id = $1
+        `,
+        [id]
+      )
+      break
+  }
+}
+
+const feedback = await client.query("SELECT * FROM feedback");
+const values: DatabaseEntry[] = feedback.rows.sort((a, b) => a.id - b.id)
+
+await client.end();
+---
+
+<AuthProvider authenticated>
+  <Layout
+    title="Manage Feedback"
+    description="View feedback from people you've sent codes to, see whether they've responded, and invalidate codes after they're sent out."
+  >
+    <div class="max-w-6xl mx-auto">
+      <main class="main-content ml-4 mr-4 py-8 max-w-6xl">
+        <h1 class="text-3xl font-bold mb-8">Manage Feedback</h1>
+        <table class="table-auto w-full">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="px-4 py-2 text-left">ID</th>
+              <th class="px-4 py-2 text-left">Receiver of Feedback</th>
+              <th class="px-4 py-2 text-left">Sender of Feedback</th>
+              <th class="px-4 py-2 text-left">Code</th>
+              <th class="px-4 py-2 text-left">Creation Date</th>
+              <th class="px-4 py-2 text-left">Submitted?</th>
+              <th class="px-4 py-2 text-left">Response</th>
+              <th class="px-4 py-2 text-left">Response Date</th>
+              <th class="px-4 py-2 text-left">Delete?</th>
+            </tr>
+          </thead>
+          <tbody>
+            {values.map((value) => (
+              <tr class="border-b border-gray-200 hover:bg-gray-100">
+                <td class="px-4 py-2"><b>{value.id}</b></td>
+                <td class="px-4 py-2">{value.for_user}</td>
+                <td class="px-4 py-2">{value.from_user}</td>
+                <td class="px-4 py-2">{value.code}</td>
+                <td class="px-4 py-2">{new Date(value.created_on).toLocaleString()}</td>
+                <td class="px-4 py-2">{value.submitted ? "Yes" : "No"}</td>
+                <td class="px-4 py-2">{value.submitted ? <a href={`/admin/manage-feedback/${value.id}`}>Click to view</a> : ""}</td>
+                <td class="px-4 py-2">{value.submitted ? new Date(value.submitted_on).toLocaleString() : ""}</td>
+                <td class="px-4 py-2">
+                  <form method="POST">
+                    <input type="hidden" name="id" value={value.id} />
+                    <input type="hidden" name="action" value="DELETE" />
+                    <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </main>
+    </div>
+  </Layout>
+</AuthProvider>
+
+<style>
+  .table-auto {
+    border-collapse: collapse;
+  }
+  
+  .table-auto th,
+  .table-auto td {
+    border: 1px solid #e2e8f0;
+  }
+  
+  .table-auto th {
+    background-color: #f7fafc;
+    font-weight: bold;
+    text-align: left;
+  }
+  
+  .table-auto td {
+    padding: 0.75rem;
+  }
+  
+  .table-auto tbody tr:hover {
+    background-color: #f7fafc;
+  }
+  </style>

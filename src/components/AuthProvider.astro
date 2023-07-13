@@ -1,0 +1,12 @@
+---
+import NotFound from './NotFound.astro';
+export interface Props {
+  authenticated: boolean,
+}
+
+const { authenticated } = Astro.props;
+---
+
+{
+  authenticated ? <slot /> : <NotFound />
+}
