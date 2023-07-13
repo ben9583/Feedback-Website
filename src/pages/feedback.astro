@@ -15,18 +15,19 @@ interface DatabaseEntry {
 }
 
 let message = ''
+const client = new Client();
 
 const handleRequest = async (code?: string, feedbackText?: string) => {
   if (!code) return
 
-  await Client.connect()
+  await client.connect()
   if (feedbackText && feedbackText.toString().trim()) {
-    const res = await Client.query('SELECT * FROM feedback WHERE code = $1', [
+    const res = await client.query('SELECT * FROM feedback WHERE code = $1', [
       code,
     ])
     if (res.rowCount === 0) {
       message = 'Invalid code. Please try again.'
-      await Client.end()
+      await client.end()
       return
     }
 
@@ -34,23 +35,23 @@ const handleRequest = async (code?: string, feedbackText?: string) => {
     if (entry.submitted) {
       message =
         'This code has already been submitted. Please contact Ben if you need to resubmit.'
-      await Client.end()
+      await client.end()
       return
     }
 
-    await Client.query(
+    await client.query(
       'UPDATE feedback SET submitted = true, response = $1, submitted_on = NOW() WHERE code = $2 RETURNING *',
       [feedbackText, code]
     )
-    await Client.end()
+    await client.end()
     return Astro.redirect('/thanks', 302)
   } else {
-    const res = await Client.query('SELECT * FROM feedback WHERE code = $1', [
+    const res = await client.query('SELECT * FROM feedback WHERE code = $1', [
       code,
     ])
     if (res.rowCount === 0) {
       message = 'Invalid code. Please try again.'
-      await Client.end()
+      await client.end()
       return
     }
 
@@ -58,12 +59,12 @@ const handleRequest = async (code?: string, feedbackText?: string) => {
     if (entry.submitted) {
       message =
         'This code has already been submitted. Please contact Ben if you need to resubmit.'
-      await Client.end()
+      await client.end()
       return
     }
 
     message = ''
-    await Client.end()
+    await client.end()
     return res.rows[0]
   }
 }
@@ -120,23 +121,19 @@ if (data instanceof Response) {
               feedback on a recent encounter. Please use the following textbox
               to submit your thoughts.
             </p>
-            <p class="mb-4 text-lg">Thank you!</p>
+            <p class="mb-8 text-lg">Thank you!</p>
             <form method="POST">
-              <>
-                <label for="feedback-text">Feedback:</label>
-                <br />
-              </>
-              <>
-                <textarea
-                  id="feedback-text"
-                  name="feedback-text"
-                  placeholder="Enter feedback here..."
-                  class="mb-4 w-full"
-                  required
-                  maxlength={65535}
-                />
-                <br />
-              </>
+              <label for="feedback-text" class="text-lg">Feedback:</label>
+              <br />
+              <textarea
+                id="feedback-text"
+                name="feedback-text"
+                placeholder="Enter feedback here..."
+                class="my-4 w-full"
+                required
+                maxlength={65535}
+              />
+              <br />
               <Input type="hidden" value={data.code} id="code" name="code" />
               <Input type="submit" value="Submit" />
             </form>
