@@ -1,0 +1,70 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Input from '../components/Input.astro'
+
+import Config from '../lib/config'
+
+const handleAdmin = () => {
+  
+}
+
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData()
+  if (data.get("username") === Config.admin.username && data.get('passkey') === Config.admin.passkey) {
+    console.log('Yes!')
+    handleAdmin()
+  } else {
+    console.log('No.')
+  }
+} else {
+}
+---
+
+<Layout
+  title="Admin Page for ben9583's Feedback Site"
+  description="This is a private endpoint to ben9583's feedback website. Yes, it is authenticated. No, there are no bugs."
+>
+  <div class="max-w-xl mx-auto">
+    <main class="main-content ml-4 mr-4 py-8 max-w-xl">
+      <h1 class="text-3xl font-bold mb-8">Admin</h1>
+      <p class="mb-4 text-lg">
+        This is an administrative page for ben9583 to run the website. You've
+        probably ended up here by mistake (or not?). Use one of the links in the
+        navbar above to get where you need to go.
+      </p>
+      <p class="mb-4 text-lg">
+        Rest assured, there are no bugs with this authentication :)
+      </p>
+      <form method="POST" class="form-grid">
+        <div><label for="username" class="mr-2 text-lg">Username:</label></div><Input
+          id="username"
+          name="username"
+          placeholder="Enter username here..."
+          type="text"
+          required
+        />
+        <div><label for="passkey" class="mr-2 text-lg">Passkey:</label></div><Input
+          id="passkey"
+          name="passkey"
+          placeholder="Enter passkey here..."
+          type="password"
+          required
+        />
+        <div><Input type="submit" value="Submit" /></div>
+      </form>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .form-grid {
+    display: grid;
+    grid-template-columns: 2fr 5fr;
+    row-gap: 1rem;
+    margin-right: 10rem;
+  }
+  .form-grid > * {
+    display: flex;
+    align-items: center;
+  }
+</style>

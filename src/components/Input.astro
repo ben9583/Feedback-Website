@@ -2,9 +2,10 @@
 import type { HTMLAttributes } from 'astro/types'
 
 export type Props = HTMLAttributes<'input'>
+
 ---
 
 <input
-  {...Astro.props}
   class="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+  {...Astro.props}
 />

@@ -15,6 +15,7 @@ interface DatabaseEntry {
 }
 
 let message = ''
+let data: DatabaseEntry | undefined;
 const client = new Client();
 
 const handleRequest = async (code?: string, feedbackText?: string) => {
@@ -65,11 +66,12 @@ const handleRequest = async (code?: string, feedbackText?: string) => {
 
     message = ''
     await client.end()
-    return res.rows[0]
+    data = res.rows[0]
+    return
   }
 }
 
-const handleGet = async (): Promise<DatabaseEntry | undefined> => {
+const handleGet = async (): Promise<Response | undefined> => {
   const url = new URL(Astro.request.url)
   const params = new URLSearchParams(url.search)
   const codeQuery = params.get('code')
@@ -77,7 +79,7 @@ const handleGet = async (): Promise<DatabaseEntry | undefined> => {
   return await handleRequest(codeQuery ?? undefined)
 }
 
-const handlePost = async (): Promise<Response | DatabaseEntry | undefined> => {
+const handlePost = async (): Promise<Response | undefined> => {
   const data = await Astro.request.formData()
   const codeQuery = data.get('code')
   const feedbackText = data.get('feedback-text')
@@ -85,22 +87,21 @@ const handlePost = async (): Promise<Response | DatabaseEntry | undefined> => {
   return await handleRequest(codeQuery as string, feedbackText as string)
 }
 
-let data
 if (Astro.request.method === 'POST') {
   try {
-    data = await handlePost()
+    const res = await handlePost()
+    if (res) {
+      return res
+    }
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message)
     }
   }
 } else {
-  data = await handleGet()
+  await handleGet()
 }
 
-if (data instanceof Response) {
-  return data
-}
 ---
 
 <Layout
