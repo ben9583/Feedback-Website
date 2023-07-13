@@ -15,8 +15,8 @@ interface DatabaseEntry {
 }
 
 let message = ''
-let data: DatabaseEntry | undefined;
-const client = new Client();
+let data: DatabaseEntry | undefined
+const client = new Client()
 
 const handleRequest = async (code?: string, feedbackText?: string) => {
   if (!code) return
@@ -101,7 +101,6 @@ if (Astro.request.method === 'POST') {
 } else {
   await handleGet()
 }
-
 ---
 
 <Layout
@@ -114,9 +113,9 @@ if (Astro.request.method === 'POST') {
       {
         data ? (
           <>
-            <p class="mb-4 text-lg">
+            <h2 class="mb-4 text-xl">
               <b>Hello, {data.from_user}.</b>
-            </p>
+            </h2>
             <p class="mb-4 text-lg">
               You've received a code from <b>{data.for_user}</b> asking for
               feedback on a recent encounter. Please use the following textbox
@@ -124,7 +123,9 @@ if (Astro.request.method === 'POST') {
             </p>
             <p class="mb-8 text-lg">Thank you!</p>
             <form method="POST">
-              <label for="feedback-text" class="text-lg">Feedback:</label>
+              <label for="feedback-text" class="text-lg">
+                Feedback:
+              </label>
               <br />
               <textarea
                 id="feedback-text"
