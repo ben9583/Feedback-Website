@@ -1,0 +1,21 @@
+---
+import NotFound from '../../components/NotFound.astro';
+import Layout from '../../layouts/Layout.astro'
+import { adminAuthGuard, decodeLogin } from '../../lib/auth';
+
+const authenticated = adminAuthGuard(...decodeLogin(Astro.cookies.get('token')?.value ?? ""));
+---
+
+{ authenticated ? (
+  <Layout
+  title="Create New Code"
+  description="Create a new code for someone to provide you feedback."
+>
+  <div class="max-w-xl mx-auto">
+    <main class="main-content ml-4 mr-4 py-8 max-w-xl">
+
+    </main>
+  </div>
+  </Layout>
+  ) : <NotFound />
+}
