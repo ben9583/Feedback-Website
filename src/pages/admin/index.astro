@@ -1,24 +1,30 @@
 ---
 import Layout from '../../layouts/Layout.astro'
 import Input from '../../components/Input.astro'
-import Button from '../../components/Button.astro'
-
-import Config from '../../lib/config'
+import ButtonLikeLink from '../../components/ButtonLikeLink.astro'
+import { adminAuthGuard, decodeLogin, encodeLogin } from '../../lib/auth'
 
 let authenticated = false
 
-const handleAdmin = () => {
+const handleAdmin = (username: string, passkey: string) => {
   authenticated = true
+  Astro.cookies.set('token', encodeLogin(username, passkey), {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7,
+  })
 }
 
 if (Astro.request.method === 'POST') {
   const data = await Astro.request.formData()
-  if (
-    data.get('username') === Config.admin.username &&
-    data.get('passkey') === Config.admin.passkey
-  ) {
-    handleAdmin()
-  }
+  const username1 = data.get('username')?.toString() ?? ""
+  const passkey1 = data.get('passkey')?.toString() ?? ""
+  if (adminAuthGuard(username1, passkey1))
+    handleAdmin(username1, passkey1)
+  
+  const [username2, passkey2] = decodeLogin(Astro.cookies.get('token')?.value ?? "")
+  if(adminAuthGuard(username2, passkey2))
+    handleAdmin(username2, passkey2)
+
 }
 ---
 
@@ -36,9 +42,9 @@ if (Astro.request.method === 'POST') {
               Here, you can view all submitted feedback, generate new codes, and
               manage existing codes.
             </p>
-            <Button>View feedback</Button>
-            <Button>Create new code</Button>
-            <Button>Manage existing codes</Button>
+            <ButtonLikeLink href="/admin/view-feedback">View feedback</ButtonLikeLink>
+            <ButtonLikeLink href="/admin/new-code">Create new code</ButtonLikeLink>
+            <ButtonLikeLink href="/admin/manage-codes">Manage existing codes</ButtonLikeLink>
           </>
         ) : (
           <>
