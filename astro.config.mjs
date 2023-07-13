@@ -17,4 +17,6 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
+  site: 'https://raspi.ben9583.com',
+  compressHTML: true,
 })
