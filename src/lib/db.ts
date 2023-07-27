@@ -6,7 +6,7 @@ class Client extends pg.Client {
     super({
       database: Config.postgres.database,
       user: Config.postgres.user,
-      password: Config.postgres.password,
+      password: Config.postgres.passkey,
       host: Config.postgres.host,
       port: Config.postgres.port,
     })

@@ -9,7 +9,7 @@ export type ConfigType = {
   postgres: {
     database: string
     user: string
-    password: string
+    passkey: string
     host: string
     port: number
   }

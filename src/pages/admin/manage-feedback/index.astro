@@ -1,28 +1,27 @@
 ---
 import AuthProvider from '../../../components/AuthProvider.astro'
-import NotFound from '../../../components/NotFound.astro'
 import Layout from '../../../layouts/Layout.astro'
 import adminIsAuthenticated from '../../../lib/auth'
 import Client, { type DatabaseEntry } from '../../../lib/db'
 
 const authenticated = adminIsAuthenticated(Astro)
-if(!authenticated) return
+if (!authenticated) return
 
-const client = new Client();
-await client.connect();
+const client = new Client()
+await client.connect()
 
-if(Astro.request.method === "POST") {
+if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData()
-  const id = formData.get("id")?.toString()
-  const action = formData.get("action")?.toString()
+  const id = formData.get('id')?.toString()
+  const action = formData.get('action')?.toString()
 
-  if(!action || !id) {
+  if (!action || !id) {
     await client.end()
     return
   }
 
-  switch(action) {
-    case "DELETE":
+  switch (action) {
+    case 'DELETE':
       await client.query(
         `
         DELETE FROM feedback
@@ -34,10 +33,10 @@ if(Astro.request.method === "POST") {
   }
 }
 
-const feedback = await client.query("SELECT * FROM feedback");
+const feedback = await client.query('SELECT * FROM feedback')
 const values: DatabaseEntry[] = feedback.rows.sort((a, b) => a.id - b.id)
 
-await client.end();
+await client.end()
 ---
 
 <AuthProvider authenticated>
@@ -63,25 +62,48 @@ await client.end();
             </tr>
           </thead>
           <tbody>
-            {values.map((value) => (
-              <tr class="border-b border-gray-200 hover:bg-gray-100">
-                <td class="px-4 py-2"><b>{value.id}</b></td>
-                <td class="px-4 py-2">{value.for_user}</td>
-                <td class="px-4 py-2">{value.from_user}</td>
-                <td class="px-4 py-2">{value.code}</td>
-                <td class="px-4 py-2">{new Date(value.created_on).toLocaleString()}</td>
-                <td class="px-4 py-2">{value.submitted ? "Yes" : "No"}</td>
-                <td class="px-4 py-2">{value.submitted ? <a href={`/admin/manage-feedback/${value.id}`}>Click to view</a> : ""}</td>
-                <td class="px-4 py-2">{value.submitted ? new Date(value.submitted_on).toLocaleString() : ""}</td>
-                <td class="px-4 py-2">
-                  <form method="POST">
-                    <input type="hidden" name="id" value={value.id} />
-                    <input type="hidden" name="action" value="DELETE" />
-                    <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
-                  </form>
-                </td>
-              </tr>
-            ))}
+            {
+              values.map((value) => (
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                  <td class="px-4 py-2">
+                    <b>{value.id}</b>
+                  </td>
+                  <td class="px-4 py-2">{value.for_user}</td>
+                  <td class="px-4 py-2">{value.from_user}</td>
+                  <td class="px-4 py-2">{value.code}</td>
+                  <td class="px-4 py-2">
+                    {new Date(value.created_on).toLocaleString()}
+                  </td>
+                  <td class="px-4 py-2">{value.submitted ? 'Yes' : 'No'}</td>
+                  <td class="px-4 py-2">
+                    {value.submitted ? (
+                      <a href={`/admin/manage-feedback/${value.id}`}>
+                        Click to view
+                      </a>
+                    ) : (
+                      ''
+                    )}
+                  </td>
+                  <td class="px-4 py-2">
+                    {value.submitted
+                      ? new Date(value.submitted_on).toLocaleString()
+                      : ''}
+                  </td>
+                  <td class="px-4 py-2">
+                    <form method="POST">
+                      <input type="hidden" name="id" value={value.id} />
+                      <input type="hidden" name="action" value="DELETE" />
+                      <button
+                        type="submit"
+                        class="text-red-500 hover:text-red-700"
+                      >
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              ))
+            }
           </tbody>
         </table>
       </main>
@@ -93,23 +115,23 @@ await client.end();
   .table-auto {
     border-collapse: collapse;
   }
-  
+
   .table-auto th,
   .table-auto td {
     border: 1px solid #e2e8f0;
   }
-  
+
   .table-auto th {
     background-color: #f7fafc;
     font-weight: bold;
     text-align: left;
   }
-  
+
   .table-auto td {
     padding: 0.75rem;
   }
-  
+
   .table-auto tbody tr:hover {
     background-color: #f7fafc;
   }
-  </style>
+</style>
