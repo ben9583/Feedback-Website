@@ -38,12 +38,13 @@ const { title, description } = Astro.props
     </Header>
     {
       Astro.url.protocol === 'http:' &&
-      Astro.url.hostname !== 'localhost' &&
-      Astro.url.hostname !== '127.0.0.1' ? (
+      Astro.url.hostname !== '127.0.0.1' &&
+      Astro.url.hostname !== 'localhost' ? (
         <>
           <WarningBanner
             title="This Site is Insecure"
             description="This site appears to not be using HTTPS, meaning all traffic between you and this site can be viewed by others without you knowing. Do not include any sensitive information in feedback or other forms."
+            status="error"
           />
           <div>
             <slot />

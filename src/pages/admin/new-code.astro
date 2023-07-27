@@ -1,10 +1,46 @@
 ---
-import AuthProvider from '../../components/AuthProvider.astro';
-import NotFound from '../../components/NotFound.astro'
+import AuthProvider from '../../components/AuthProvider.astro'
+import Button from '../../components/Button.astro'
+import ButtonLikeLink from '../../components/ButtonLikeLink.astro'
+import Input from '../../components/Input.astro'
 import Layout from '../../layouts/Layout.astro'
 import adminIsAuthenticated from '../../lib/auth'
+import Client from '../../lib/db'
 
 const authenticated = adminIsAuthenticated(Astro)
+if (!authenticated) return
+
+let code = ''
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData()
+  const forUser = formData.get('for-user')?.toString()
+  const fromUser = formData.get('from-user')?.toString()
+
+  if (!forUser || !fromUser) return
+
+  const client = new Client()
+  await client.connect()
+
+  // A function that generates a 32-character long string of uppercase letters, lowercase letters, and numbers.
+  const generateCode = () => {
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let result = ''
+    const charactersLength = characters.length
+    for (let i = 0; i < 32; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    }
+    return result
+  }
+
+  code = generateCode()
+
+  await client.query(
+    'INSERT INTO feedback(for_user, from_user, code) VALUES ($1, $2, $3)',
+    [forUser, fromUser, code]
+  )
+}
 ---
 
 <AuthProvider authenticated>
@@ -13,7 +49,80 @@ const authenticated = adminIsAuthenticated(Astro)
     description="Create a new code for someone to provide you feedback."
   >
     <div class="max-w-xl mx-auto">
-      <main class="main-content ml-4 mr-4 py-8 max-w-xl"></main>
+      <main class="main-content ml-4 mr-4 py-8 max-w-xl">
+        <h1 class="text-3xl font-bold mb-8">Create a New Code</h1>
+        {
+          !code ? (
+            <>
+              <p class="mb-4 text-lg">
+                You can use this tool to generate a new code and link to share
+                with someone for them to leave feedback. This will be added to
+                your "Manage feedback" page immediately and will update with the
+                response once it's submitted by whoever you share it with.
+              </p>
+              <p class="mb-4 text-lg">
+                The code is a one-time use. If you need multiple people to leave
+                feedback, generate a code for each of them. The user cannot edit
+                their feedback once it's submitted.
+              </p>
+              <form method="POST" class="form-grid">
+                <>
+                  <div class="mt-4">
+                    <label for="for-user" class="mr-2 text-lg">
+                      Who is the feedback for?:
+                    </label>
+                  </div>
+                  <Input
+                    id="for-user"
+                    name="for-user"
+                    placeholder="Enter name here..."
+                    type="text"
+                    required
+                  />
+                </>
+                <>
+                  <div class="mt-2">
+                    <label for="from-user" class="mr-2 text-lg">
+                      Who is giving the feedback?:
+                    </label>
+                  </div>
+                  <Input
+                    id="from-user"
+                    name="from-user"
+                    placeholder="Enter name here..."
+                    type="text"
+                    required
+                  />
+                </>
+                <div class="mt-2">
+                  <Input type="submit" value="Submit" />
+                </div>
+              </form>
+            </>
+          ) : (
+            <>
+              <p class="mb-4 text-lg">Here is your code: {code}</p>
+              <p class="mb-4 text-lg">
+                Share this link with someone to leave feedback:{' '}
+                <a
+                  href={`${Astro.url.protocol}//${Astro.url.host}/feedback?code=${code}`}
+                >
+                  {Astro.url.protocol}//{Astro.url.host}/feedback?code={code}
+                </a>
+              </p>
+              <p class="mb-4 text-lg">
+                The code is now in the "Manage Feedback" page and you can check
+                it to see when feedback has been submitted.
+              </p>
+              <p class="mb-4 text-lg">
+                <ButtonLikeLink href={Astro.url.href}>
+                  Generate a new code
+                </ButtonLikeLink>
+              </p>
+            </>
+          )
+        }
+      </main>
     </div>
   </Layout>
 </AuthProvider>
