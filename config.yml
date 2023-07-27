@@ -1,8 +1,4 @@
-﻿website:
-  title: Feedback Website
-  description: Use this website to provide feedback.
-
-postgres:
+﻿postgres:
   database: feedback-db
   user: feedback-user
   passkey: feedback-password
